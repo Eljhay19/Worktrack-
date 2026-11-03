@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="850" viewBox="0 0 360 850" role="img" aria-labelledby="title desc">
+  <title id="title">WORKTRACK profile setup visual</title>
+  <desc id="desc">A soft green workspace illustration with a plant, book, calendar, and clock.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f5f1dc"/>
+      <stop offset="0.55" stop-color="#fffaf0"/>
+      <stop offset="1" stop-color="#ece7c9"/>
+    </linearGradient>
+    <linearGradient id="desk" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#d7b06d"/>
+      <stop offset="1" stop-color="#f3d79a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.22" cy="0.28" r="0.85">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.78"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8db34b"/>
+      <stop offset="1" stop-color="#365f2c"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#263d25" flood-opacity="0.24"/>
+    </filter>
+  </defs>
+
+  <rect width="360" height="850" rx="0" fill="url(#bg)"/>
+  <rect width="360" height="110" fill="#f0ebcf" opacity="0.9"/>
+  <rect width="360" height="850" fill="url(#glow)"/>
+  <path d="M0 525C63 537 109 585 122 665C138 578 210 534 360 522V850H0Z" fill="#d6d6ae" opacity="0.58"/>
+  <path d="M0 563C83 570 137 626 145 718C175 620 242 574 360 572V850H0Z" fill="#f8f2d9" opacity="0.84"/>
+
+  <g transform="translate(103 200) scale(.88)" filter="url(#softShadow)">
+    <rect x="0" y="23" width="98" height="70" rx="14" fill="#5d7c43"/>
+    <rect x="14" y="10" width="10" height="31" rx="5" fill="#5d7c43"/>
+    <rect x="66" y="10" width="10" height="31" rx="5" fill="#5d7c43"/>
+    <rect x="13" y="38" width="18" height="18" rx="3" fill="#eef3dd"/>
+    <rect x="42" y="38" width="18" height="18" rx="3" fill="#eef3dd"/>
+    <rect x="13" y="65" width="18" height="18" rx="3" fill="#eef3dd"/>
+    <rect x="42" y="65" width="18" height="18" rx="3" fill="#eef3dd"/>
+    <circle cx="92" cy="86" r="39" fill="#f7f4e7" stroke="#5d7c43" stroke-width="10"/>
+    <path d="M92 63v25l17 14" fill="none" stroke="#2d4029" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <text x="180" y="380" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="38" font-weight="700" fill="#17251d">WORKTRACK</text>
+  <text x="180" y="405" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" letter-spacing="6" fill="#7e8366">PLAN . LOG . GROW</text>
+  <rect x="152" y="435" width="56" height="5" rx="3" fill="#7a8d57"/>
+
+  <g transform="translate(40 603) scale(.9)">
+    <ellipse cx="98" cy="123" rx="55" ry="18" fill="#8c6f37" opacity="0.16"/>
+    <rect x="61" y="92" width="70" height="82" rx="9" fill="#fbf8ef"/>
+    <path d="M65 96h62v14H65Z" fill="#ded5bd"/>
+    <path d="M95 93C84 50 78 21 42 0C28 40 57 78 95 93Z" fill="url(#leaf)"/>
+    <path d="M101 94C104 56 119 26 158 11C166 54 140 84 101 94Z" fill="url(#leaf)"/>
+    <path d="M90 99C61 75 31 71 0 90C26 120 60 123 90 99Z" fill="url(#leaf)"/>
+    <path d="M108 100C139 78 170 77 197 101C169 128 135 126 108 100Z" fill="url(#leaf)"/>
+    <path d="M97 93C91 69 72 42 45 13M102 95C113 68 135 40 158 12M90 100C61 93 30 92 1 90M108 101C136 99 166 101 197 101" fill="none" stroke="#d9e5ae" stroke-width="2" opacity="0.54"/>
+  </g>
+
+  <g transform="translate(125 710)">
+    <rect x="0" y="24" width="172" height="26" rx="4" fill="#6f7157"/>
+    <rect x="12" y="14" width="168" height="24" rx="4" fill="#f7f1dc"/>
+    <rect x="28" y="5" width="163" height="25" rx="4" fill="#a88454"/>
+    <path d="M28 9h155" stroke="#fdf5db" stroke-width="3" opacity="0.7"/>
+  </g>
+
+  <rect y="760" width="360" height="90" fill="url(#desk)"/>
+  <rect y="759" width="360" height="2" fill="#c3964d" opacity="0.5"/>
+</svg>
