@@ -65,8 +65,11 @@ class WorkTrackAccessController extends Controller
         } else {
             $subject = WorkProfile::where('access_enabled', true)->where('access_email', $email)->first();
             if ($subject) {
-                // Registering with an existing email always verifies the original profile.
-                $purpose = 'login';
+                if ($purpose === 'register') {
+                    throw ValidationException::withMessages([
+                        'email' => 'This email already has a WorkTrack profile. Choose "Already have a profile? Access here." to continue.',
+                    ]);
+                }
             } elseif (WorkProfile::whereRaw('LOWER(email) = ?', [$email])->exists()) {
                 throw ValidationException::withMessages([
                     'email' => 'Open the original browser, then choose Link Email / Enable Device Access in Settings. Your existing history will be preserved.',
