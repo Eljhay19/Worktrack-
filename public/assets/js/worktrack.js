@@ -2081,8 +2081,13 @@ async function sendAccessCode(email, resend = false) {
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Enter a valid email address.');
   accessSending = true;
   const profileSubmit = els.profileForm.querySelector('[type="submit"]');
+  const profileSubmitLabel = profileSubmit?.textContent || 'Save Profile';
   els.sendProfileAccessBtn.disabled = true;
   profileSubmit.disabled = true;
+  if (accessPurpose === 'register') {
+    profileSubmit.textContent = 'Opening…';
+    profileSubmit.setAttribute('aria-busy', 'true');
+  }
   els.sendProfileAccessBtn.textContent = 'Sending…';
   els.resendReminderCodeBtn.disabled = true;
   els.profileAccessError.textContent = '';
@@ -2099,8 +2104,9 @@ async function sendAccessCode(email, resend = false) {
       const path = redirect.origin === window.location.origin && redirect.pathname.startsWith('/worktrack')
         ? redirect.pathname + redirect.search : '/worktrack/calendar';
       window.history.replaceState({}, '', path);
-      await loadState();
+      closeAll(false);
       toast('Profile ready');
+      void loadState().catch(handleApiError);
       return;
     }
     if (!result.challenge_id) throw new Error(result.message || 'The code could not be sent. Please try again.');
@@ -2113,6 +2119,8 @@ async function sendAccessCode(email, resend = false) {
     accessSending = false;
     els.sendProfileAccessBtn.disabled = false;
     profileSubmit.disabled = false;
+    profileSubmit.textContent = profileSubmitLabel;
+    profileSubmit.removeAttribute('aria-busy');
     els.sendProfileAccessBtn.textContent = 'Send OTP';
     els.resendReminderCodeBtn.disabled = false;
   }
