@@ -2103,9 +2103,6 @@ async function sendAccessCode(email, resend = false) {
       toast('Profile ready');
       return;
     }
-    if (accessPurpose === 'register' && result.challenge_id) {
-      throw new Error('This email already has a profile. Choose "Already have a profile? Access here." to continue.');
-    }
     if (!result.challenge_id) throw new Error(result.message || 'The code could not be sent. Please try again.');
     showAccessOtp({ ...result, email: result.email || email, purpose: result.purpose || accessPurpose });
     toast(resend ? 'New verification code sent' : 'Verification code sent');

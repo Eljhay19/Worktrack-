@@ -114,20 +114,13 @@ class ProfileAccessTest extends TestCase
         $this->assertSame('current-tab@example.com', $second->fresh()->access_email);
     }
 
-    public function test_existing_email_registration_does_not_start_otp_and_preserves_history(): void
+    public function test_existing_email_registration_uses_otp_without_overwriting_history(): void
     {
         $profile = $this->profile(true, 'existing@example.com');
         $entry = $this->entry($profile);
-        $this->send('register', 'EXISTING@example.com', ['profile' => $this->draft()])
-            ->assertUnprocessable();
-        Mail::assertNothingSent();
-        $this->assertDatabaseCount('work_profile_access_challenges', 0);
-        $this->assertDatabaseCount('work_profiles', 1);
-        $this->assertSame('Original nickname', $profile->fresh()->nickname);
-        $this->assertDatabaseHas('work_entries', ['id' => $entry->id, 'profile_id' => $profile->id]);
-
-        $id = $this->send('login', 'EXISTING@example.com')
+        $id = $this->send('register', 'EXISTING@example.com', ['profile' => $this->draft()])
             ->assertOk()->assertJsonPath('purpose', 'login')->json('challenge_id');
+        Mail::assertSentTimes(WorkTrackAccessCode::class, 1);
         $this->postJson('/api/worktrack/access/verify', ['challenge_id' => $id, 'code' => $this->code()])->assertOk();
         $this->assertDatabaseCount('work_profiles', 1);
         $this->assertSame('Original nickname', $profile->fresh()->nickname);
