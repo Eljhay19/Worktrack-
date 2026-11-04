@@ -2677,6 +2677,26 @@ function manualHoursFromDraft() {
   return { normal, extended, total };
 }
 
+function fitManualHoursToTimeSpan(changedInput = null) {
+  if (!state.draft || state.draft.status !== 'work' || !state.draft.time_in || !state.draft.time_out) return;
+  if (!state.entryEditing && state.entries[state.draft.work_date]) return;
+
+  const span = computeHours(state.draft.time_in, state.draft.time_out, 'work', state.draft.regular_hours).total;
+  const normal = manualHoursValue(els.normalHoursInput.value);
+  const extended = manualHoursValue(els.extendedHoursInput.value);
+  if (normal === null && extended === null) return;
+
+  const normalValue = normal ?? 0;
+  const extendedValue = extended ?? 0;
+  if (normalValue + extendedValue <= span) return;
+
+  if (changedInput === els.extendedHoursInput) {
+    els.normalHoursInput.value = formatHours(Math.max(span - extendedValue, 0));
+  } else {
+    els.extendedHoursInput.value = formatHours(Math.max(span - normalValue, 0));
+  }
+}
+
 function computePayFromDraft() {
   if (!state.draft) return null;
   const hours = manualHoursFromDraft();
@@ -2692,6 +2712,8 @@ function computePayFromDraft() {
 }
 
 function updatePayPreview() {
+  readEntryInputs();
+  fitManualHoursToTimeSpan();
   readEntryInputs();
   const hours = manualHoursFromDraft();
   const pay = computePayFromDraft();
@@ -3078,6 +3100,8 @@ function attachEvents() {
   [els.normalHoursInput, els.extendedHoursInput].forEach((input) => {
     input.addEventListener('input', () => {
       resumeWorkEntry();
+      readEntryInputs();
+      fitManualHoursToTimeSpan(input);
       updatePayPreview();
     });
   });
