@@ -17,6 +17,11 @@
         try {
             document.documentElement.dataset.theme = localStorage.getItem('worktrack_theme') === 'dark' ? 'dark' : 'light';
         } catch (_) {}
+        function markAppLoading() {
+            document.documentElement.dataset.appState = 'loading';
+        }
+        window.addEventListener('beforeunload', markAppLoading);
+        window.addEventListener('pagehide', markAppLoading);
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

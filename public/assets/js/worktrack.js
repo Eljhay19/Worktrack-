@@ -65,6 +65,16 @@ const els = {
   profileMeta: document.getElementById('profileMeta'),
   prevMonthCard: document.getElementById('prevMonthCard'),
   nextMonthCard: document.getElementById('nextMonthCard'),
+  calendarPeriodBtn: document.getElementById('calendarPeriodBtn'),
+  calendarPeriodPicker: document.getElementById('calendarPeriodPicker'),
+  calendarMonthSelect: document.getElementById('calendarMonthSelect'),
+  calendarYearSelect: document.getElementById('calendarYearSelect'),
+  calendarMonthValue: document.getElementById('calendarMonthValue'),
+  calendarYearValue: document.getElementById('calendarYearValue'),
+  calendarMonthMenu: document.getElementById('calendarMonthMenu'),
+  calendarYearMenu: document.getElementById('calendarYearMenu'),
+  closeCalendarPeriodBtn: document.getElementById('closeCalendarPeriodBtn'),
+  calendarPeriodTodayBtn: document.getElementById('calendarPeriodTodayBtn'),
   todayBtn: document.getElementById('todayBtn'),
   themeToggleBtn: document.getElementById('themeToggleBtn'),
   dailyRecordsBtn: document.getElementById('dailyRecordsBtn'),
@@ -937,6 +947,7 @@ function renderHeader() {
   const year = state.viewDate.getFullYear();
   const month = state.viewDate.getMonth();
   els.monthTitle.innerHTML = `${months[month]} <span>${year}</span>`;
+  syncCalendarPeriodPicker();
   els.normalRateText.textContent = state.profile ? `${formatMoney(hourlyRate())}/hr` : '--';
 
   if (!state.profile) {
@@ -950,6 +961,119 @@ function renderHeader() {
   els.profileGreeting.textContent = `Hi, ${nickname}`;
   els.profileMeta.textContent = `${workType} - ${status}`;
   els.profileNote.hidden = false;
+}
+
+function syncCalendarPeriodPicker() {
+  if (!els.calendarMonthSelect || !els.calendarYearSelect) return;
+
+  if (!els.calendarMonthMenu.children.length) {
+    months.forEach((month, index) => {
+      const option = document.createElement('button');
+      option.type = 'button';
+      option.className = 'calendar-period-option';
+      option.dataset.calendarPeriodOption = 'month';
+      option.dataset.value = String(index);
+      option.setAttribute('role', 'option');
+      option.textContent = month;
+      els.calendarMonthMenu.appendChild(option);
+    });
+  }
+
+  if (!els.calendarYearMenu.children.length) {
+    const currentYear = new Date().getFullYear();
+    for (let year = 2000; year <= Math.max(2100, currentYear + 10); year += 1) {
+      const option = document.createElement('button');
+      option.type = 'button';
+      option.className = 'calendar-period-option';
+      option.dataset.calendarPeriodOption = 'year';
+      option.dataset.value = String(year);
+      option.setAttribute('role', 'option');
+      option.textContent = String(year);
+      els.calendarYearMenu.appendChild(option);
+    }
+  }
+
+  const month = String(state.viewDate.getMonth());
+  const year = String(state.viewDate.getFullYear());
+  els.calendarMonthSelect.dataset.value = month;
+  els.calendarYearSelect.dataset.value = year;
+  els.calendarMonthValue.textContent = months[state.viewDate.getMonth()];
+  els.calendarYearValue.textContent = year;
+  updateCalendarPeriodOptions(els.calendarMonthMenu, month);
+  updateCalendarPeriodOptions(els.calendarYearMenu, year);
+}
+
+function updateCalendarPeriodOptions(menu, selectedValue) {
+  menu.querySelectorAll('.calendar-period-option').forEach((option) => {
+    const isSelected = option.dataset.value === selectedValue;
+    option.classList.toggle('is-selected', isSelected);
+    option.setAttribute('aria-selected', String(isSelected));
+  });
+}
+
+function closeCalendarPeriodMenus() {
+  [
+    [els.calendarMonthSelect, els.calendarMonthMenu],
+    [els.calendarYearSelect, els.calendarYearMenu],
+  ].forEach(([button, menu]) => {
+    if (!button || !menu) return;
+    menu.hidden = true;
+    button.setAttribute('aria-expanded', 'false');
+  });
+}
+
+function toggleCalendarPeriodMenu(type) {
+  const button = type === 'month' ? els.calendarMonthSelect : els.calendarYearSelect;
+  const menu = type === 'month' ? els.calendarMonthMenu : els.calendarYearMenu;
+  if (!button || !menu) return;
+  const isOpening = menu.hidden;
+  closeCalendarPeriodMenus();
+  if (isOpening) {
+    menu.hidden = false;
+    button.setAttribute('aria-expanded', 'true');
+  }
+}
+
+function chooseCalendarPeriodOption(option) {
+  const type = option.dataset.calendarPeriodOption;
+  const button = type === 'month' ? els.calendarMonthSelect : els.calendarYearSelect;
+  if (!button) return;
+  button.dataset.value = option.dataset.value;
+  closeCalendarPeriodMenus();
+  applyCalendarPeriod(false);
+}
+
+function closeCalendarPeriodPicker() {
+  if (!els.calendarPeriodPicker || !els.calendarPeriodBtn) return;
+  closeCalendarPeriodMenus();
+  els.calendarPeriodPicker.hidden = true;
+  els.calendarPeriodBtn.setAttribute('aria-expanded', 'false');
+}
+
+function toggleCalendarPeriodPicker() {
+  if (!els.calendarPeriodPicker || !els.calendarPeriodBtn) return;
+  const isOpening = els.calendarPeriodPicker.hidden;
+  if (isOpening) {
+    syncCalendarPeriodPicker();
+    els.calendarPeriodPicker.hidden = false;
+    els.calendarPeriodBtn.setAttribute('aria-expanded', 'true');
+    return;
+  }
+  closeCalendarPeriodPicker();
+}
+
+function applyCalendarPeriod(closePicker = true) {
+  const year = Number(els.calendarYearSelect?.dataset.value);
+  const month = Number(els.calendarMonthSelect?.dataset.value);
+  if (!Number.isInteger(year) || !Number.isInteger(month) || month < 0 || month > 11) return;
+
+  const monthDelta = (year - state.viewDate.getFullYear()) * 12
+    + month - state.viewDate.getMonth();
+  state.viewDate = new Date(year, month, 1);
+  state.calendarDirection = monthDelta === 0 ? null : monthDelta > 0 ? 'next' : 'previous';
+  if (closePicker) closeCalendarPeriodPicker();
+  renderAll();
+  setRouteSection('calendar', true);
 }
 
 function renderSummary() {
@@ -2779,6 +2903,7 @@ async function deleteEntry(key, message = 'Day cleared') {
 function closeAll(updateRoute = true, replaceRoute = false) {
   closeExportMenu();
   closeTimePicker();
+  closeCalendarPeriodPicker();
   state.entryEditing = false;
   setNotificationPopoverOpen(false);
   els.profileOverlay.hidden = true;
@@ -2853,6 +2978,25 @@ async function checkReminder() {
 function attachEvents() {
   els.prevMonthCard.addEventListener('click', () => changeMonth(-1));
   els.nextMonthCard.addEventListener('click', () => changeMonth(1));
+  els.calendarPeriodBtn.addEventListener('click', toggleCalendarPeriodPicker);
+  els.closeCalendarPeriodBtn.addEventListener('click', closeCalendarPeriodPicker);
+  els.calendarMonthSelect.addEventListener('click', () => toggleCalendarPeriodMenu('month'));
+  els.calendarYearSelect.addEventListener('click', () => toggleCalendarPeriodMenu('year'));
+  [els.calendarMonthMenu, els.calendarYearMenu].forEach((menu) => {
+    menu.addEventListener('click', (event) => {
+      const option = event.target.closest('.calendar-period-option');
+      if (option) chooseCalendarPeriodOption(option);
+    });
+  });
+  els.calendarPeriodTodayBtn.addEventListener('click', () => {
+    closeCalendarPeriodPicker();
+    goToday();
+  });
+  document.addEventListener('click', (event) => {
+    if (els.calendarPeriodPicker.hidden) return;
+    if (event.target.closest('#calendarPeriodPicker, #calendarPeriodBtn')) return;
+    closeCalendarPeriodPicker();
+  });
   els.todayBtn.addEventListener('click', goToday);
   els.themeToggleBtn.addEventListener('click', toggleTheme);
   els.dailyRecordsBtn.addEventListener('click', () => openDailyRecords());
@@ -3220,6 +3364,10 @@ function attachEvents() {
   });
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape') return;
+    if (els.calendarPeriodPicker && !els.calendarPeriodPicker.hidden) {
+      closeCalendarPeriodPicker();
+      return;
+    }
     if (!els.dailyRecordsOverlay.hidden) {
       closeDailyRecords();
       return;

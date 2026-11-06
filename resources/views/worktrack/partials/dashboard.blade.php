@@ -41,7 +41,44 @@
                     <span aria-hidden="true">&lsaquo;</span>
                 </button>
                 <div class="calendar-heading">
-                    <strong id="monthTitle">{{ $initialMonth->format('F Y') }}</strong>
+                    <button
+                        class="calendar-period-btn"
+                        type="button"
+                        id="calendarPeriodBtn"
+                        aria-haspopup="dialog"
+                        aria-expanded="false"
+                        aria-controls="calendarPeriodPicker"
+                    >
+                        <strong id="monthTitle">{{ $initialMonth->format('F Y') }}</strong>
+                        <span class="calendar-period-chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="calendar-period-picker" id="calendarPeriodPicker" role="dialog" aria-label="Choose calendar month" hidden>
+                        <div class="calendar-period-picker-head">
+                            <strong>Choose month</strong>
+                            <button class="round-close calendar-period-close" type="button" id="closeCalendarPeriodBtn" aria-label="Close month picker">&times;</button>
+                        </div>
+                        <div class="calendar-period-fields">
+                            <div class="calendar-period-field" data-calendar-period-field="month">
+                                <span>Month</span>
+                                <button class="calendar-period-select" type="button" id="calendarMonthSelect" aria-haspopup="listbox" aria-expanded="false" aria-controls="calendarMonthMenu">
+                                    <span id="calendarMonthValue"></span>
+                                    <span class="calendar-period-select-chevron" aria-hidden="true"></span>
+                                </button>
+                                <div class="calendar-period-menu" id="calendarMonthMenu" role="listbox" aria-label="Calendar month options" hidden></div>
+                            </div>
+                            <div class="calendar-period-field" data-calendar-period-field="year">
+                                <span>Year</span>
+                                <button class="calendar-period-select" type="button" id="calendarYearSelect" aria-haspopup="listbox" aria-expanded="false" aria-controls="calendarYearMenu">
+                                    <span id="calendarYearValue"></span>
+                                    <span class="calendar-period-select-chevron" aria-hidden="true"></span>
+                                </button>
+                                <div class="calendar-period-menu" id="calendarYearMenu" role="listbox" aria-label="Calendar year options" hidden></div>
+                            </div>
+                        </div>
+                        <div class="calendar-period-actions">
+                            <button class="calendar-period-today" type="button" id="calendarPeriodTodayBtn">Today</button>
+                        </div>
+                    </div>
                     <button class="today-btn" type="button" id="todayBtn">Today</button>
                 </div>
                 <button class="icon-btn subtle" type="button" id="nextMonthCard" aria-label="Next month">
