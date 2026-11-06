@@ -3430,14 +3430,22 @@ async function startApp() {
   const app = document.querySelector('[data-app]');
   const loadError = document.getElementById('appLoadError');
   const retry = document.getElementById('retryAppLoadBtn');
+  const body = document.body;
+  const bootCover = document.getElementById('appBootCover');
   loadError.hidden = true;
   document.documentElement.dataset.appState = 'loading';
+  body.dataset.appBooting = 'true';
+  if (bootCover) bootCover.hidden = false;
+  app.hidden = true;
   app.inert = true;
   app.setAttribute('aria-busy', 'true');
   try {
     await Promise.all([loadState(), document.fonts?.ready]);
     // Reveal only the hydrated dashboard and its fully restored route together.
     document.documentElement.dataset.appState = 'ready';
+    delete body.dataset.appBooting;
+    if (bootCover) bootCover.hidden = true;
+    app.hidden = false;
     app.inert = false;
     app.setAttribute('aria-busy', 'false');
     if (!backgroundSyncStarted) {
@@ -3447,6 +3455,8 @@ async function startApp() {
     }
   } catch (error) {
     document.documentElement.dataset.appState = 'ready';
+    delete body.dataset.appBooting;
+    if (bootCover) bootCover.hidden = true;
     app.inert = false;
     app.setAttribute('aria-busy', 'false');
     loadError.hidden = false;
